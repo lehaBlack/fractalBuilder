@@ -88,6 +88,7 @@ public:
     //}-----------------------------------------------------------------------
     static void gouraud_shading_traingle (Vec3i t0, Vec3i t1, Vec3i t2, float ity0, float ity1, float ity2,
                                           TGAImage & image, int * zbuffer);
+
 };
 
 
