@@ -2,26 +2,21 @@
 #include "GlApi.h"
 #include <glib\glLib.h>
 #include <stack>
-namespace GlApi
+class GLibContext
 {
-	using Int = int;
+private:
+	TGAImage image_;
+	int *zBuffer_;
+	int maxZ;
+	//угол объектива=60гр
+	//нижняя граница отсечения=0
+	//верхняя граница отсечения=100
+	double pM_[4][4];
+	//переводим координаты из пользовательских
+	//в координаты на картинке+глубина
+	bool convert(double x, double y, double z, Vec3i &answer);
+public:
+	GLibContext(int width, int height, int bbp);
+	~GLibContext();
+};
 
-	class Context
-	{
-		using VectStackT = std::stack<Vec3i>;
-	private:
-		TGAImage _image;
-		VectStackT _tmpStack;
-		TGAColor _selectedColor;
-		TGAColor _cearColor;
-		BeginMode _mode;
-
-	public:
-		Context(int w, int h, int bpp = 3);
-		~Context();
-		void drawPoint(Int x, Int y);
-
-		void begin(BeginMode mode);
-		void vertex2i(Int v1, Int v2);
-	};
-}

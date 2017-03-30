@@ -6,8 +6,12 @@
 #include <fractals\TockensStream.h>
 #include <glib\tgaimage.h>
 #include <glib\glLib.h>
-
-int main()
+int fractalScriptMain()
+{
+	fractals::scriptFileExec("testLuaFractal.lua");
+	return 0;
+}
+int imageDebug()
 {
 	TGAImage image(200, 200, 3);
 	Vec2i t0[3] = { Vec2i(180, 70),   Vec2i(50, 160),  Vec2i(70, 80) };
@@ -25,4 +29,8 @@ int main()
 	image.write_tga_file("res.tga");
     return 0;
 }
-
+int main()
+{
+	imageDebug();
+	return 0;
+}

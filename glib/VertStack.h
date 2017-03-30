@@ -15,11 +15,6 @@ private:
 	VertStackCell<T> cells[S];
 	double getTa(double dy, double dx)
 	{
-		/*if (dx == 0.0)
-			return INFINITY;*/
-		/*double a = atan(dy / dx);
-		if (dx < 0)
-			a += M_PI;*/
 		return dy / dx;
 	}
 public:
