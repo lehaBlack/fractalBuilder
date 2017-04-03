@@ -6,6 +6,7 @@
 #include <fractals\TockensStream.h>
 #include <glib\tgaimage.h>
 #include <glib\glLib.h>
+#include <GLApi\GLApi_Context.h>
 int fractalScriptMain()
 {
 	fractals::scriptFileExec("testLuaFractal.lua");
@@ -29,8 +30,24 @@ int imageDebug()
 	image.write_tga_file("res.tga");
     return 0;
 }
+int glapiContextDebug()
+{
+	GlApi::GLibContext ctx(680,460);
+	ctx.GLibBegin(GlApi::GlApi_QUADS);
+	ctx.GLibTranslate(0.0, 0.0, -6.0);
+	ctx.GLibColor3d(0.0, 0.0, 1.0);
+	ctx.GLibVertex2d(0.0, 1.0);
+	ctx.GLibColor3d(0.0, 1.0, 0.0);
+	ctx.GLibVertex2d(0.0, 0.0);
+	ctx.GLibColor3d(1.0, 0.0, 0.0);
+	ctx.GLibVertex2d(1.0, 0.0);
+	ctx.GLibVertex2d(1.0, 1.0);
+	ctx.GLibEnd();
+	ctx.GLibSave("context_test.tga");
+	return 0;
+}
 int main()
 {
-	imageDebug();
+	glapiContextDebug();
 	return 0;
 }
