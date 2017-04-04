@@ -429,16 +429,16 @@ public:
 
         return *this;
     }
-	//{---------------------------------------------------------------
-	//! @brief each coordinate is multiplied by the number and the result is stored in the caller
-	//!
-	//! @param num  number, which is multiplied by the Vec3<t>
-	//}---------------------------------------------------------------
-	void operator *= (float num)
-	{
-		x_ *= num;
-		y_ *= num;
-	}
+     //{---------------------------------------------------------------
+     //! @brief each coordinate is multiplied by the number and the result is stored in the caller
+     //!
+     //! @param num  number, which is multiplied by the Vec3<t>
+     //}---------------------------------------------------------------
+     void operator *= (float num)
+     {
+          x_ *= num;
+          y_ *= num;
+     }
 
     t x_;   //!<First element of array (You can use x_ if you works with coordinates).
             //!<Otherwise don't use it. Work with elements such as array.
@@ -486,9 +486,9 @@ template <typename t> Vec2<t> operator - (const Vec2<t> & v1, const Vec2<t> & v2
 //}---------------------------------------------------------------
 template <typename t> Vec2<t> operator * (const Vec2<t> & vec, float num)
 {
-	Vec2<t> res_vec = vec;
-	res_vec *= num;
-	return res_vec;
+     Vec2<t> res_vec = vec;
+     res_vec *= num;
+     return res_vec;
 }
 //{---------------------------------------------------------------
 //! @brief calculates the multiplication of Vec3<t> and num
@@ -501,22 +501,22 @@ template <typename t> Vec2<t> operator * (const Vec2<t> & vec, float num)
 template <typename t> 
 bool operator == (const Vec2<t> & v0, const Vec2<t> & v1)
 {
-	return v0.x_==v1.x_ && v0.y_==v1.y_;
+     return v0.x_==v1.x_ && v0.y_==v1.y_;
 }
 template <typename t>
 bool operator != (const Vec2<t> & v0, const Vec2<t> & v1)
 {
-	return !(v0==v1);
+     return !(v0==v1);
 }
 template <typename t>
 bool operator == (const Vec3<t> & v0, const Vec3<t> & v1)
 {
-	return v0.x_ == v1.x_ && v0.y_ == v1.y_ && v0.z_ == v1.z_;
+     return v0.x_ == v1.x_ && v0.y_ == v1.y_ && v0.z_ == v1.z_;
 }
 template <typename t>
 bool operator != (const Vec3<t> & v0, const Vec3<t> & v1)
 {
-	return !(v0 == v1);
+     return !(v0 == v1);
 }
 typedef Vec2<float> Vec2f;
 typedef Vec2<int>   Vec2i;

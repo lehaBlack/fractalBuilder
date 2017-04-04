@@ -16,6 +16,6 @@
 //Release: Mutex.Release(userdata: winapiMutex)                 --mutex:winapiMutex
 //    retValue: boolean: ReleaseMutexState
 
-//Destroy: Mutex.Destroy(userdata: winapiMutex)				    --mutex:winapiMutex
+//Destroy: Mutex.Destroy(userdata: winapiMutex)                        --mutex:winapiMutex
 //    retValue: boolean: CloseHandle
 void openMutexLib(lua_State *L);

@@ -20,7 +20,7 @@ Model::Model ():
 
 Model::Model (const Model & that)
 {
-	printf ("Ooooooh, nooooo! You use copy constructor Model::Model (const Model &)\n");
+     printf ("Ooooooh, nooooo! You use copy constructor Model::Model (const Model &)\n");
     assert (false);
 }
 
