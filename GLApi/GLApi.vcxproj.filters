@@ -24,6 +24,9 @@
     <ClInclude Include="GLApi_Context.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="GlapiConstantes.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GlApi.cpp">

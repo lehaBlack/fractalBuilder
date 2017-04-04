@@ -1,5 +1,5 @@
 #pragma once
-#include "GlApi.h"
+#include "GlapiConstantes.h"
 #include <glib\glLib.h>
 #include <stack>
 #include <vector>
@@ -97,7 +97,7 @@ namespace GlApi
 		GLibContext(int width, int height);
 		~GLibContext();
 		//------------------------------------------------
-		void GLibPerspective(double fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+		void GLibPerspective(double fovy, double aspect, double zNear, double zFar);
 		void GLibBegin(BeginMode mode);
 		void GLibEnd();
 		void GLibClear();

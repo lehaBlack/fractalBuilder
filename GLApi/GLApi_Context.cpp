@@ -358,7 +358,7 @@ GlApi::GLibContext::GLibContext(int width, int height):
 	GLibPerspective(45.0, aspect, 0.1, 100.0);
 }
 
-void GlApi::GLibContext::GLibPerspective(double fovy, GLdouble aspect, GLdouble n, GLdouble f)
+void GlApi::GLibContext::GLibPerspective(double fovy, double aspect, double n, double f)
 {
 	double sr = 1.0/tan((fovy*M_PI/180.0)*0.5);
 	pM_[0][0] = sr/aspect;

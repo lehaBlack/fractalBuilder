@@ -291,7 +291,7 @@ void glLib::ns_triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, const Pal
 			int d1 = countD(t1, t2, Vec2i(x, y));
 			int d2 = countD(t2, t0, Vec2i(x, y));
 			if (
-				(d0 == d1 && d1 == d2) ||
+				(d0 == d1 && d1 == d2)||
 				(d0 == d1 && d2 == 0) ||
 				(d1 == d2 && d0 == 0) ||
 				(d0 == d2 && d1 == 0) ||

@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GlApi.h" />
+    <ClInclude Include="GlapiConstantes.h" />
     <ClInclude Include="GLApi_Context.h" />
   </ItemGroup>
   <ItemGroup>

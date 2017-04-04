@@ -1,39 +1,27 @@
 #pragma once
-#include <Windows.h>
 #include <glib\glLib.h>
-#include <gl\GL.h>
-
+#include <map>
+#include <mutex>
+#include "GLApi_Context.h"
 namespace GlApi
 {
-	enum UsedLibrary
-	{
-		OpenGL,
-		Glib
-	};
-	enum BeginMode:unsigned short
-	{
-		GlApi_POINTS		 = GL_POINTS,
-		GlApi_LINES			 = GL_LINES,
-		GlApi_LINE_LOOP		 = GL_LINE_LOOP,
-		GlApi_LINE_STRIP	 = GL_LINE_STRIP,
-		GlApi_TRIANGLES		 = GL_TRIANGLES,
-		GlApi_TRIANGLE_STRIP = GL_TRIANGLE_STRIP,
-		GlApi_TRIANGLE_FAN	 = GL_TRIANGLE_FAN,
-		GlApi_QUADS			 = GL_QUADS,
-		GlApi_QUAD_STRIP	 = GL_QUAD_STRIP,
-		GlApi_POLYGON		 = GL_POLYGON,
-		GlApi_NOT_INIT		 = -1
-	};
-	using CTX_idT = int;
 	class GlApi
 	{
-		GlApi();
-		~GlApi();
+	private:
+		using ContextStor = std::map<CTX_idT,  GLibContext*>;
+		using ContextStorCell = std::pair<CTX_idT,  GLibContext*>;
+
+		static std::mutex globalLocker;
+		static CTX_idT selectedContext;
+		static ContextStor contextes;
 	public:
-		static CTX_idT useOpenGL();
+		static CTX_idT createContext(int width, int height);
+		static void UseContext(CTX_idT ctxId);
+		static void DestroyContext(CTX_idT ctxId);
+
 		static void Begin(BeginMode mode);
 		static void End();
-
+		
 		static void Vertex2s(GLshort v1, GLshort v2);
 		static void Vertex2i(GLint v1, GLint v2);
 		static void Vertex2f(GLfloat v1, GLfloat v2);
@@ -63,6 +51,10 @@ namespace GlApi
 		static void Color4d(GLdouble v1, GLdouble v2, GLdouble v3, GLdouble v4);
 		
 		static void Translate(GLdouble v1, GLdouble v2, GLdouble v3);
+		static void Perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+		static void Clear();
+
+		static void SaveTGA(const char* tgaImageName);
 	};
 
 }
