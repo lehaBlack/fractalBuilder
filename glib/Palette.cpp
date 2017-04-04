@@ -1,5 +1,5 @@
 #include "Palette.h"
-
+#include <algorithm>
 
 
 Palette::Palette()
@@ -27,17 +27,28 @@ LinePalette::LinePalette(const Vec2i & b, const Vec2i & e, const TGAColor & c0, 
 	b_(b),
 	e_(e)
 {
+	int x1 = b_.x_ - e_.x_;
+	int y1 = b_.y_ - e_.y_;
+	r_ = sqrt(static_cast<double>(x1*x1 + y1*y1));
 }
 
 TGAColor LinePalette::getColor(int x, int y) const
 {
 	int x0 = b_.x_ - x;
 	int y0 = b_.y_ - y;
-	int x1 = e_.x_ - x;
-	int y1 = e_.y_ - y;
-	double r0 = sqrt(x0*x0 + y0*y0);
-	double r1 = sqrt(x1*x1 + y1*y1);
-	return (c0_ * r0 + c1_*r1)/(r1+r0);
+	double r1 = sqrt(static_cast<double>(x0*x0 + y0*y0))/r_;
+	double r0 = 1.0 - r1;
+	return c0_ * r0 + c1_*r1;
+}
+
+
+void TrianglePalette::init()
+{
+	xM_ = std::max(v0_.x_, std::max(v1_.x_, v2_.x_));
+	yM_ = std::max(v0_.y_, std::max(v1_.y_, v2_.y_));
+	xm_ = std::min(v0_.x_, std::min(v1_.x_, v2_.x_));
+	ym_ = std::min(v0_.y_, std::min(v1_.y_, v2_.y_));
+	maxDistance_ = sqrt(static_cast<double>((xM_ - xm_)*(xM_ - xm_) + (yM_ - ym_)*(yM_ - ym_)));
 }
 
 TrianglePalette::TrianglePalette(
@@ -50,6 +61,7 @@ TrianglePalette::TrianglePalette(
 	v1_(v1),
 	v2_(v2)
 {
+	init();
 }
 
 TrianglePalette::TrianglePalette(const Vec3i & v0, const Vec3i & v1, const Vec3i & v2, 
@@ -61,22 +73,27 @@ TrianglePalette::TrianglePalette(const Vec3i & v0, const Vec3i & v1, const Vec3i
 	v1_(v1.x_, v1.y_),
 	v2_(v2.x_, v2.y_)
 {
+	init();
 }
-//по поводу этого алгоритма меня терзают смутные сомнения...
 TGAColor TrianglePalette::getColor(int x, int y) const
 {
-	int x0 = v0_.x_ - x;
-	int y0 = v0_.y_ - y;
-	int x1 = v1_.x_ - x;
-	int y1 = v1_.y_ - y;
-	int x2 = v2_.x_ - x;
-	int y2 = v2_.y_ - y;
-	double r0 = sqrt(x0*x0 + y0*y0);
-	double r1 = sqrt(x1*x1 + y1*y1);
-	double r2 = sqrt(x2*x2 + y2*y2);
-	double n = 2.0/(r2 + r1 + r0);
-	r0 = 1.0 - r0* n;
-	r1 = 1.0 - r1* n;
-	r2 = 1.0 - r2* n;
-	return (c0_ *r0 + c1_*r1 + c2_*r2);
+	double m2 =
+		static_cast<double>(
+		(y - v0_.y_)*(v1_.x_ - v0_.x_) -
+			(x - v0_.x_)*(v1_.y_ - v0_.y_)) /
+		static_cast<double>(
+		(v2_.y_ - v0_.y_)*(v1_.x_ - v0_.x_) -
+			(v2_.x_ - v0_.x_)*(v1_.y_ - v0_.y_));
+
+	double m1 =
+		static_cast<double>(
+		(y - v0_.y_)*(v2_.x_ - v0_.x_) -
+			(x - v0_.x_)*(v2_.y_ - v0_.y_)) /
+		static_cast<double>(
+		(v1_.y_ - v0_.y_)*(v2_.x_ - v0_.x_) -
+			(v1_.x_ - v0_.x_)*(v2_.y_ - v0_.y_));
+	double m0 = 1.0 - m1 - m2;
+	return c0_*m0 + c1_*m1 + c2_*m2;
 }
+
+

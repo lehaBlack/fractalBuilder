@@ -15,9 +15,9 @@ bool GlApi::GLibContext::convert(double x, double y, double z, Vec3i &answer)
 	res[1] = hmCoord[1] / hmCoord[3];
 	res[2] = hmCoord[2] / hmCoord[3];
 	//переводим результат в координаты картинки
-	answer.x_ = image_.get_width()+static_cast<int>(res[0] * image_.get_width()*0.5);
-	answer.y_ = image_.get_height()+static_cast<int>(res[1] * image_.get_height()*0.5);
-	answer.z_ = maxZ_+static_cast<int>(res[2] * maxZ_*0.5);
+	answer.x_ = image_.get_width()/2+static_cast<int>(res[0] * image_.get_width()*0.5);
+	answer.y_ = image_.get_height()/2+static_cast<int>(res[1] * image_.get_height()*0.5);
+	answer.z_ = maxZ_/2+static_cast<int>(res[2] * maxZ_*0.5);
 	//проверяем может ли эта тачка быть отрисованной
 	for (int i=0;i<3;i++)
 		if(abs(res[i])>1.0)
@@ -123,7 +123,7 @@ void GlApi::GLibContext::TPoints()
 {
 	while (vertexStor_.size() > 0)
 	{
-		coordVertT& v = vertexStor_.front();
+		coordVertT v = vertexStor_.front();
 		drawPoint(v.x(), v.y(), v.z(), v.color4B);
 	}
 }
@@ -132,8 +132,8 @@ void GlApi::GLibContext::TLines()
 {
 	while (vertexStor_.size() > 1)
 	{
-		coordVertT& v0 = vertexStor_[0];
-		coordVertT& v1 = vertexStor_[1];
+		coordVertT v0 = vertexStor_[0];
+		coordVertT v1 = vertexStor_[1];
 		vertexStor_.erase(vertexStor_.begin(), vertexStor_.begin()+2);
 		drawLine(v0, v1);
 	}
@@ -144,7 +144,7 @@ void GlApi::GLibContext::TLinesLoop()
 	bool lastIteration = false;
 	if (vertexStor_.size() < 2)
 		return;
-	coordVertT& v0 = vertexStor_.front();
+	coordVertT v0 = vertexStor_.front();
 	vertexStor_.pop_front();
 	coordVertT v1 = v0;
 	coordVertT v2;
@@ -191,9 +191,9 @@ void GlApi::GLibContext::Ttriangles()
 {
 	while (vertexStor_.size() > 2)
 	{
-		coordVertT& v0 = vertexStor_[0];
-		coordVertT& v1 = vertexStor_[1];
-		coordVertT& v2 = vertexStor_[2];
+		coordVertT v0 = vertexStor_[0];
+		coordVertT v1 = vertexStor_[1];
+		coordVertT v2 = vertexStor_[2];
 		vertexStor_.erase(vertexStor_.begin(), vertexStor_.begin() + 3);
 		drawTriangle(v0, v1, v2);
 	}
@@ -226,12 +226,12 @@ void GlApi::GLibContext::TtrianglesFan()
 	bool lastIteration = false;
 	if (vertexStor_.size() < 3)
 		return;
-	coordVertT& v0 = vertexStor_[0];
+	coordVertT v0 = vertexStor_[0];
 	coordVertT  v1 = vertexStor_[1];
 	vertexStor_.erase(vertexStor_.begin(), vertexStor_.begin() + 2);
 	while (vertexStor_.size() > 0)
 	{
-		coordVertT& v2 = vertexStor_.front();
+		coordVertT v2 = vertexStor_.front();
 		vertexStor_.pop_front();
 
 		drawTriangle(v0,v1, v2);
@@ -243,10 +243,10 @@ void GlApi::GLibContext::Tquads()
 {
 	while (vertexStor_.size() > 3)
 	{
-		coordVertT& v0 = vertexStor_[0];
-		coordVertT& v1 = vertexStor_[1];
-		coordVertT& v2 = vertexStor_[2];
-		coordVertT& v3 = vertexStor_[3];
+		coordVertT v0 = vertexStor_[0];
+		coordVertT v1 = vertexStor_[1];
+		coordVertT v2 = vertexStor_[2];
+		coordVertT v3 = vertexStor_[3];
 		vertexStor_.erase(vertexStor_.begin(), vertexStor_.begin() + 4);
 		drawQuade(v0, v1, v2, v3);
 	}
@@ -436,9 +436,9 @@ void GlApi::GLibContext::GLibColor3f(float r, float g, float b)
 
 void GlApi::GLibContext::GLibColor4ub(byte r, byte g, byte b, byte a)
 {
-	selectedColor_[0] = r;
+	selectedColor_[2] = r;
 	selectedColor_[1] = g;
-	selectedColor_[2] = b;
+	selectedColor_[0] = b;
 	selectedColor_[3] = a;
 }
 

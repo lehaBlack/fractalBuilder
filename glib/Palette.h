@@ -26,7 +26,7 @@ private:
 	TGAColor c1_;
 	Vec2i b_;
 	Vec2i e_;
-
+	double r_;
 public:
 	LinePalette(const Vec2i &b,const Vec2i &e,const TGAColor& c0, const TGAColor& c1);
 	virtual TGAColor getColor(int x, int y) const override;
@@ -35,13 +35,21 @@ class TrianglePalette:
 	public Palette
 {
 private:
+private:
 	TGAColor c0_;
 	TGAColor c1_;
 	TGAColor c2_;
 	Vec2i v0_;
 	Vec2i v1_;
 	Vec2i v2_;
+	int xM_;
+	int xm_;
+	int yM_;
+	int ym_;
 
+	double maxDistance_;
+
+	void init();
 public:
 	TrianglePalette(
 		const Vec2i &v0, const Vec2i &v1, const Vec2i &v2, 

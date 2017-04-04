@@ -126,11 +126,11 @@ void glLib::ns_line(Vec3i begin, Vec3i end, TGAImage & image, const Palette& pal
 	{
 		if (swap)
 		{
-			ns_point(y0, x0, z0, image, palete, zbuffer);
+				ns_point(y0, x0, z0, image, palete, zbuffer);
 		}
 		else
 		{
-			ns_point(x0, y0, z0, image, palete, zbuffer);
+				ns_point(x0, y0, z0, image, palete, zbuffer);
 		}
 		error += derror;
 		zerror += zderror;
@@ -151,31 +151,31 @@ void glLib::ns_line(Vec3i begin, Vec3i end, TGAImage & image, const Palette& pal
 void glLib::line(Vec2i begin, Vec2i end, TGAImage & image, const TGAColor & color)
 {
 	SolidePalette p(color);
-	fingBorder(begin, end, image);
-	ns_line(begin, end, image, p);
+	if (fingBorder(begin, end, image) == INSIDE)
+		ns_line(begin, end, image, p);
 }
 
 void glLib::line(Vec3i begin, Vec3i end, TGAImage & image, const TGAColor & color, int * zbuffer)
 {
 	SolidePalette p(color);
-	fingBorder(begin, end, image);
-	ns_line(begin, end, image, p, zbuffer);
+	if(fingBorder(begin, end, image)==INSIDE)
+		ns_line(begin, end, image, p, zbuffer);
 }
 
 void glLib::line(Vec2i begin, Vec2i end, TGAImage& image, const TGAColor & c0, const TGAColor & c1)
 {
 	LinePalette palite(begin, end, c0, c1);
-	fingBorder(begin, end, image);
-	ns_line(begin, end, image, palite);
+	if (fingBorder(begin, end, image) == INSIDE)
+		ns_line(begin, end, image, palite);
 }
 
 void glLib::line(Vec3i begin, Vec3i end, TGAImage & image, const TGAColor & c0, const TGAColor & c1, int * zbuffer)
 {
 	Vec2i b(begin.x_,begin.y_);
 	Vec2i e(end.x_, end.y_);
-	LinePalette palite(e, e, c0, c1);
-	fingBorder(begin, end, image);
-	ns_line(begin, end, image, palite, zbuffer);
+	LinePalette palite(b, e, c0, c1);
+	if (fingBorder(begin, end, image) == INSIDE)
+		ns_line(begin, end, image, palite, zbuffer);
 }
 
 void glLib::triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage & image, const  TGAColor color)
@@ -232,68 +232,75 @@ void glLib::triangle(Vec3i t0, Vec3i t1, Vec3i t2, TGAImage & image, const Palet
 
 void glLib::ns_triangle (Vec3i t0, Vec3i t1, Vec3i t2, TGAImage & image, const Palette& palete, int * zbuffer)
 {
-    if (!zbuffer)
-    THROW (ZERO_POINTER);
-
-    // simple sort
-    if (t0.y_ > t1.y_) std::swap (t0, t1);
-    if (t0.y_ > t2.y_) std::swap (t0, t2);
-    if (t1.y_ > t2.y_) std::swap (t1, t2);
-
-    // drawing triangle
-    size_t width = (size_t) image.get_width ();
-    Vec3i full_vec    = t2 - t0;
-    for (int y = t0.y_; y <= t2.y_; y++)
-    {
-        int dy            = y <= t1.y_ ? (y - t0.y_) : (t2.y_ - y);
-        Vec3i segment_vec = y <= t1.y_ ? (t1 - t0) : (t2 - t1);
-
-        float alpha = 0.0;
-        if (full_vec.y_ != 0.0)
-            alpha = (float) dy / full_vec.y_;
-        float beta = 0.0;
-        if (segment_vec.y_ != 0)
-            beta = (float) dy / segment_vec.y_;
-
-        int beg_x  = (int) (y <= t1.y_ ? (alpha * full_vec.x_ + t0.x_) : (t2.x_ - alpha * full_vec.x_));
-        int end_x  = (int) (y <= t1.y_ ? (beta * segment_vec.x_ + t0.x_) : (t2.x_ - beta * segment_vec.x_));
-        int beg_z  = (int) (y <= t1.y_ ? (alpha * full_vec.z_ + t0.z_) : (t2.z_ - alpha * full_vec.z_));
-        int end_z  = (int) (y <= t1.y_ ? (beta * segment_vec.z_ + t0.z_) : (t2.z_ - beta * segment_vec.z_));
-
-        if (beg_x > end_x) { std::swap (beg_x, end_x); std::swap (beg_z, end_z); }
-
-        // draw a horizontal line
-        for (int x = beg_x; x <= end_x; x++)
-        {
-            size_t idx = y * width + x;
-            double gamma = (beg_x == end_x) ? 1.0 : (double) (x - beg_x) / (end_x - beg_x);
-            int z = (int) (gamma * (end_z - beg_z) + beg_z);
-            if (zbuffer[idx] < z)
-            {
-                zbuffer[idx] = z;
-                image.set (x, y, palete.getColor(x,y));
-            }
-        }
-    }
+	if (!zbuffer)
+		THROW(ZERO_POINTER);
+	int xm;
+	int ym;
+	int xM;
+	int yM;
+	size_t width = (size_t)image.get_width();
+	xM = std::max(t0.x_, std::max(t1.x_, t2.x_));
+	xm = std::min(t0.x_, std::min(t1.x_, t2.x_));
+	yM = std::max(t0.y_, std::max(t1.y_, t2.y_));
+	ym = std::min(t0.y_, std::min(t1.y_, t2.y_));
+	for (int x = xm; x <= xM; x++)
+	{
+		for (int y = ym; y < yM; y++)
+		{
+			int d0 = countD(t0, t1, Vec3i(x, y));
+			int d1 = countD(t1, t2, Vec3i(x, y));
+			int d2 = countD(t2, t0, Vec3i(x, y));
+			if (
+				(d0 == d1 && d1 == d2)||
+				(d0 == d1 && d2 == 0) ||
+				(d1 == d2 && d0 == 0) ||
+				(d0 == d2 && d1 == 0) ||
+				(d0 == d1 && d0 == 0) ||
+				(d0 == d2 && d0 == 0) ||
+				(d1 == d2 && d1 == 0))
+			{
+				int z = calculateZc(x, y,
+					t0.x_, t0.y_, t0.z_,
+					t1.x_, t1.y_, t1.z_,
+					t2.x_, t2.y_, t2.z_);
+				size_t idx = y * width + x;
+				if (zbuffer[idx] < z)
+				{
+					image.set(x, y, palete.getColor(x, y));
+					zbuffer[idx] = z;
+				}
+			}
+		}
+	}
 }
 
 void glLib::ns_triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, const Palette& palete) {
-	if (t0.y_ == t1.y_ && t0.y_ == t2.y_) return; // i dont care about degenerate triangles
-												  // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
-	if (t0.y_>t1.y_) std::swap(t0, t1);
-	if (t0.y_>t2.y_) std::swap(t0, t2);
-	if (t1.y_>t2.y_) std::swap(t1, t2);
-	int total_height = t2.y_ - t0.y_;
-	for (int i = 0; i<total_height; i++) {
-		bool second_half = i>t1.y_ - t0.y_ || t1.y_ == t0.y_;
-		int segment_height = second_half ? t2.y_ - t1.y_ : t1.y_ - t0.y_;
-		float alpha = (float)i / total_height;
-		float beta = (float)(i - (second_half ? t1.y_ - t0.y_ : 0)) / segment_height; // be careful: with above conditions no division by zero here
-		Vec2i A = t0 + (t2 - t0)*alpha;
-		Vec2i B = second_half ? t1 + (t2 - t1)*beta : t0 + (t1 - t0)*beta;
-		if (A.x_>B.x_) std::swap(A, B);
-		for (int j = A.x_; j <= B.x_; j++) {
-			image.set(j, t0.y_ + i, palete.getColor(j, t0.y_ + i)); // attention, due to int casts t0.y+i != A.y
+	int xm;
+	int ym;
+	int xM;
+	int yM;
+	xM = std::max(t0.x_, std::max(t1.x_, t2.x_));
+	xm = std::min(t0.x_, std::min(t1.x_, t2.x_));
+	yM = std::max(t0.y_, std::max(t1.y_, t2.y_));
+	ym = std::min(t0.y_, std::min(t1.y_, t2.y_));
+	for (int x = xm; x <= xM; x++)
+	{
+		for (int y = ym; y < yM; y++)
+		{
+			int d0 = countD(t0, t1, Vec2i(x, y));
+			int d1 = countD(t1, t2, Vec2i(x, y));
+			int d2 = countD(t2, t0, Vec2i(x, y));
+			if (
+				(d0 == d1 && d1 == d2) ||
+				(d0 == d1 && d2 == 0) ||
+				(d1 == d2 && d0 == 0) ||
+				(d0 == d2 && d1 == 0) ||
+				(d0 == d1 && d0 == 0) ||
+				(d0 == d2 && d0 == 0) ||
+				(d1 == d2 && d1 == 0))
+			{
+				image.set(x, y, palete.getColor(x, y));
+			}
 		}
 	}
 }

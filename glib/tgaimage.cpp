@@ -7,7 +7,7 @@ TGAImage::TGAImage() : data(NULL), width(0), height(0), bytespp(0) {
 }
 
 TGAImage::TGAImage(int w, int h, int bpp) : data(NULL), width(w), height(h), bytespp(bpp) {
-    unsigned long nbytes = (unsigned long) width*height*bytespp;
+    unsigned long nbytes = (unsigned long) (width+1)*(height+1)*bytespp;
     data = new unsigned char[nbytes];
     memset(data, 0, nbytes);
 }

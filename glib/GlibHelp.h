@@ -2,16 +2,21 @@
 #include "glLib.h"
 
 #define TEST_INTERSECT(val, i) ((val)&(i)==(i))
+inline int averageVec(int v)
+{
+	int r = (v * 10) / 2;
+	return v / 2 + (r % 10 > 4 ? 1 : 0);
+}
 inline void averageVec(const Vec2i& v0, const Vec2i& v1, Vec2i& r)
 {
-	r.x_ = (v0.x_ + v1.x_) / 2;
-	r.y_ = (v0.y_ + v1.y_) / 2;
+	r.x_ = averageVec(v0.x_ + v1.x_);
+	r.y_ = averageVec(v0.y_ + v1.y_);
 }
 inline void averageVec(const Vec3i& v0, const Vec3i& v1, Vec3i& r)
 {
-	r.x_ = (v0.x_ + v1.x_) / 2;
-	r.y_ = (v0.y_ + v1.y_) / 2;
-	r.z_ = (v0.z_ + v1.z_) / 2;
+	r.x_ = averageVec(v0.x_ + v1.x_);
+	r.y_ = averageVec(v0.y_ + v1.y_);
+	r.z_ = averageVec(v0.z_ + v1.z_);
 }
 template<typename T>
 inline int countD(const T& v0, const T& v1, const T& v2)
@@ -31,12 +36,12 @@ inline int calculateZc(
 {
 	//|X0 Y0 Z0|
 	//|X1 Y1 Z1| == 0
-	//|X2 Y2 Y3|
+	//|X2 Y2 Z2|
 	int X0 = (x - v0_x);	int X1 = (v1_x - v0_x);	int X2 = (v2_x - v0_x);
 	int Y0 = (y - v0_y);	int Y1 = (v1_y - v0_y);	int Y2 = (v2_y - v0_y);
 	/*Z0=?;*/				int Z1 = (v1_z - v0_z);	int Z2 = (v2_z - v0_z);
 	int D = X0*(Y1*Z2-Y2*Z1)-Y0*(X1*Z2+X2*Z2);
-	return Z1 - (D / ((X1*Y2 - X2*Y1)));
+	return (Z1 - (D / ((X1*Y2 - X2*Y1))))+ v0_z;
 }
 template<typename T>
 inline glLib::IntersectT glLib::fingBorder_(T begin, T & res, const TGAImage & image)
@@ -52,7 +57,17 @@ inline glLib::IntersectT glLib::fingBorder_(T begin, T & res, const TGAImage & i
 		averageVec(begin, res, v);
 
 		if (oldv == v)
+		{
+			if (res.x_ == 1)
+				res.x_ = 0;
+			if (res.y_ == 1)
+				res.y_ = 0;
+			if (res.x_ == image.get_width())
+				res.x_ -= 1;
+			if (res.y_ == image.get_height())
+				res.y_ -= 1;
 			return INSIDE;
+		}
 
 		ra = intersect(v, image);
 		if ((rb&ra) != INSIDE)
@@ -107,12 +122,16 @@ inline  glLib::IntersectT glLib::fingBorder(T& begin, T & end, const TGAImage & 
 	IntersectT rb, ra, re;
 
 	if (begin == end)
+	{
 		return NONE;
+	}
 	rb = intersect(begin, image);
 	re = intersect(end, image);
 
 	if (rb == INSIDE && re == INSIDE)
+	{
 		return INSIDE;
+	}
 
 	do
 	{

@@ -126,5 +126,9 @@ namespace GlApi
 		void GLibVertex2s(short x, short y);
 		void GLibVertex3i(int x, int y, int z);
 		void GLibVertex2i(int x, int y);
+		//------------------------------------------------
+		void GLibTranslate(double x, double y, double z);
+		//------------------------------------------------
+		void GLibSave(const char* fileName);
 	};
 }
