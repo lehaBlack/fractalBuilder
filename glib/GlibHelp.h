@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 #include "glLib.h"
-
+//тестовый коментарий
 #define TEST_INTERSECT(val, i) ((val)&(i)==(i))
 inline int averageVec(int v)
 {
