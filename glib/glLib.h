@@ -1,4 +1,4 @@
-//epicfail@gmail.com
+﻿//epicfail@gmail.com
 
 //! @brief  Do graphic
 

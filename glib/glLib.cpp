@@ -1,4 +1,4 @@
-//epicfail@gmail.com
+﻿//epicfail@gmail.com
 
 #include <cmath>
 #include <cmath>
